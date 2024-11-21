@@ -9,19 +9,31 @@ function action(cardPicked) {
   return 1;
 }
 
-function drawCard() {
-  const card = Math.ceil((Math.random() * 10) % 6);
+function showPickedCard(card) {
   if (card === 3) {
     console.log("\nOH NOOO..... you picked a BOMB CARD 💣💣💣💥💥💥\n");
     return action(0);
   }
-  console.log("\nLUCKY FELLOW you picked a SAFE CARD 😏😏😏😏\n");
-  console.log("\nLUCKY FELLOW you picked a SAFE CARD 😏😏😏😏\n");
-  console.log("\nLUCKY FELLOW you picked a SAFE CARD 😏😏😏😏\n");
-  console.log("\nLUCKY FELLOW you picked a SAFE CARD 😏😏😏😏\n");
-  console.log("\nLUCKY FELLOW you picked a SAFE CARD 😏😏😏😏\n");
 
-  return action(1);
+  switch (card) {
+    case 1 :
+      console.log("\nLUCKY FELLOW you picked TACOCAT CARD 😏😏😏😏\n");
+      break;
+    case 2 :
+      console.log("\nLUCKY FELLOW you picked GODCAT CARD 😏😏😏😏\n");
+      break;
+    case 4 :
+      console.log("\nLUCKY FELLOW you picked CATERMELON CARD 😏😏😏\n");
+      break;
+    case 5 :
+      console.log("\nLUCKY FELLOW you picked HARY POTATO CARD 😏😏😏\n");
+      break;
+    case 6 :
+      console.log("\nLUCKY FELLOW you picked RAINBOWCAT CARD 😏😏😏\n");
+      break;
+  }
+
+  return action(card);
 }
 
 function isBombExploded(card,player1, ndif) {
@@ -38,7 +50,8 @@ function explodingKittens(player1, ndif) {
   console.log(player1 + " has " + ndif + " diffuse cards");
 
   if (prompt("pick next card", "✅") === "✅") {
-    let card = drawCard();
+    let card = Math.ceil((Math.random() * 10) % 6);
+    card = showPickedCard(card);
     return isBombExploded(card, player1, ndif);    
   }
 
