@@ -1,60 +1,135 @@
-function action(cardPicked) {
-  if (cardPicked === 0) {
-    if (confirm("Use the diffuse if there are any?")) {
-      return 0;
-    }
-    return -1;
-  }
-
-  return 1;
+function takeName(number) {
+  return prompt("Enter Player " + number + " Name: ");
 }
 
-function showPickedCard(card) {
+function occurences(pickedCards, target) {
+  let count = 0;
+  for (let index = 0; index < pickedCards.length; index++){
+    if (pickedCards[index] === target) {
+      count = count + 1;
+    }
+  }
+
+  return "" + count;
+}
+
+function countTheCards(pickedCards) {
+  const taco = occurences(pickedCards, "1");
+  const god = occurences(pickedCards, "2");
+  const diffuse = occurences(pickedCards, "3");
+  const caterMelon = occurences(pickedCards, "4");
+  const hairyPotato = occurences(pickedCards, "5");
+  const rainbow = occurences(pickedCards, "6");
+
+  return taco + god + diffuse + caterMelon + hairyPotato + rainbow;
+}
+
+function displayCards(pickedCards, player) {
+  if (pickedCards === "GAME OVER") {
+    return player + " HAS NO DIFFUSE TO SAVE KITTENS";
+  }
+  const nCards = countTheCards(pickedCards);
+
+  console.log("_________________________________________________________________________________________________________");
+  let message = player + " HAVE DIFFUSE: " + nCards[2];
+  message = message + "  TACOCAT 🌮:" + nCards[0];
+  message = message + "  GODCAT 🐱:" + nCards[1];
+  message = message + "  CATERMELON 🍉:" + nCards[3];
+  message = message + "  HAIRY POTATOCAT 🥔:" + nCards[4];
+  message = message + "  RAINBOWCAT 🌈:" + nCards[5];
+
+  return message;
+}
+
+function pickCard(player) {
+  if (prompt(player + " pick the next card raa....", "✅") === "✅") {
+    return Math.ceil((Math.random() * 10) % 6);
+  }
+
+  if (confirm("Do you want to quit?")) {
+    return pickCard();
+  }
+
+  console.log("BYE BYE");
+}
+
+function isBombExploded(card) {
+  return card === 3 
+}
+
+function displayPickedCard(card, player) {
   if (card === 3) {
-    console.log("\nOH NOOO..... you picked a BOMB CARD 💣💣💣💥💥💥\n");
-    return action(0);
+    return "\nOH NOOO....." + player + " you picked a BOMB CARD 💣💣💣💥💥💥\n";
   }
 
   switch (card) {
     case 1 :
-      console.log("\nLUCKY FELLOW you picked TACOCAT CARD 😏😏😏😏\n");
-      break;
+      return "\n" + player + " you picked TACOCAT 🌮🌮\n";
     case 2 :
-      console.log("\nLUCKY FELLOW you picked GODCAT CARD 😏😏😏😏\n");
-      break;
+      return "\n" + player + " you picked GODCAT 🐱🐱\n";
     case 4 :
-      console.log("\nLUCKY FELLOW you picked CATERMELON CARD 😏😏😏\n");
-      break;
+      return "\n" + player + " you picked CATERMELON 🍉🍉\n";
     case 5 :
-      console.log("\nLUCKY FELLOW you picked HARY POTATO CARD 😏😏😏\n");
-      break;
+      return "\n" + player + " you picked HAIRY POTATOCAT 🥔🥔\n";
     case 6 :
-      console.log("\nLUCKY FELLOW you picked RAINBOWCAT CARD 😏😏😏\n");
-      break;
+      return "\n" + player + " you picked RAINBOWCAT 🌈🌈\n";
   }
-
-  return action(card);
 }
 
-function isBombExploded(card,player1, ndif) {
-  if (card <= 0) {
-    if (ndif - 1 < 0 || card < 0) {
-      return "GAME OVER\nplayer unable to diffuse so kitten died";
+function sliceIfInRange(text , currentIndex, endIndex) {
+  if (currentIndex > endIndex) {
+    return ""; 
+  }
+
+  return text[currentIndex] + slice(text, currentIndex + 1, endIndex);
+}
+
+function slice(text, start, end) {
+  const startIndex = start < 0 ? 0 : start;
+  const endIndex = text.length <= end ? text.length - 1 : end;
+
+  return sliceIfInRange(text, startIndex, endIndex);
+}
+
+function updateCards(isBomb, cards, lastPickedCard) {
+  if (isBomb) {
+    if (cards[0] === "3") {
+    return "0" + slice(cards, 1, cards.length);
     }
-    return explodingKittens(player1, ndif - 1);
+    return "GAME OVER";
   }
-  return explodingKittens(player1, ndif);
+  return cards + lastPickedCard;
 }
 
-function explodingKittens(player1, ndif) {
-  console.log(player1 + " has " + ndif + " diffuse cards");
-
-  if (prompt("pick next card", "✅") === "✅") {
-    let card = Math.ceil((Math.random() * 10) % 6);
-    card = showPickedCard(card);
-    return isBombExploded(card, player1, ndif);    
-  }
-
+function PlayerTurn(playerCards, player) {
+  let cards = playerCards;
+  
+  const PCard = pickCard(player);
+  console.log(displayPickedCard(PCard, player));
+  const isBomb = isBombExploded(PCard);
+  const currentCards = updateCards(isBomb, cards, PCard);
+  console.log(displayCards(currentCards, player));
+  return currentCards;
 }
 
-console.log(explodingKittens(prompt("enter player 1 name:"), 1));
+function startPicking(player1Cards, player2Cards, player1, player2) {
+  let currentCardsOf1 = PlayerTurn(player1Cards, player1);
+  if (currentCardsOf1 === "GAME OVER") {
+    return player2 + "WON THE MATCH\n congratulationsssss🥳🥳🥳🥳🥳🥳🥳";
+  }
+  let currentCardsOf2 = PlayerTurn(player2Cards, player2);
+  if (currentCardsOf2 === "GAME OVER") {
+    return player1 + " WON THE MATCH\n congratulationsssss🥳🥳🥳🥳🥳🥳🥳";
+  }
+  
+  return startPicking(currentCardsOf1, currentCardsOf2, player1, player2);
+}
+
+const player1 = takeName(1);
+const player2 = takeName(2);
+const p1Cards = "3";
+const p2Cards = "3";
+
+console.log(displayCards(p1Cards, player1));
+console.log(displayCards(p2Cards, player2));
+console.log(startPicking("3", "3", player1, player2));
